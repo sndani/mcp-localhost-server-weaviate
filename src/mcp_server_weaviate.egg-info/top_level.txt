@@ -1,3 +1,4 @@
+__init__
 server
 settings
 weaviate

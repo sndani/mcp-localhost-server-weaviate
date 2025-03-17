@@ -39,4 +39,4 @@ COPY --from=uv /app /app
 ENV PATH="/app/.venv/bin:$PATH"
 
 # Set the entrypoint command
-ENTRYPOINT ["python", "-m", "src.server", "--weaviate-url", "YOUR_WEAVIATE_URL", "--weaviate-api-key", "YOUR_WEAVIATE_API_KEY", "--search-collection-name", "YOUR_SEARCH_COLLECTION", "--store-collection-name", "YOUR_STORE_COLLECTION", "--openai-api-key", "YOUR_OPENAI_API_KEY"]
+ENTRYPOINT ["python", "-m", "src.server", "--weaviate-url", "http://localhost:8080/v1/graphql", "--weaviate-api-key", "", "--search-collection-name", "Reader", "--store-collection-name", "Reader", "--openai-api-key", ""]

@@ -1,6 +1,7 @@
 LICENSE
 README.md
 pyproject.toml
+src/__init__.py
 src/server.py
 src/settings.py
 src/weaviate.py

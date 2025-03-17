@@ -12,7 +12,7 @@ from .weaviate import WeaviateConnector
 
 import logging
 import sys
-
+import os
 # Configure logging
 logging.basicConfig(
     level=logging.DEBUG,
@@ -235,5 +235,18 @@ def main(
     asyncio.run(_run())
 
 if __name__ == "__main__":
-    print("Running main...", flush=True)
+    # Get configuration from environment variables
+    weaviate_url = os.getenv("WEAVIATE_URL")
+    weaviate_api_key = os.getenv("WEAVIATE_API_KEY")
+    search_collection_name = os.getenv("SEARCH_COLLECTION_NAME")
+    store_collection_name = os.getenv("STORE_COLLECTION_NAME")
+    openai_api_key = os.getenv("OPENAI_API_KEY")
+    cohere_api_key = os.getenv("COHERE_API_KEY")
+
+    if not search_collection_name or not store_collection_name:
+        raise ValueError("Collection names must be provided")
+    
+    if not (openai_api_key or cohere_api_key):
+        raise ValueError("Either OpenAI or Cohere API key must be provided")
+
     main()

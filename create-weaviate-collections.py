@@ -3,6 +3,8 @@ import weaviate.classes as wvc
 from weaviate.auth import Auth
 import os
 from typing import Optional
+from weaviate.client import WeaviateClient
+from weaviate.connect import ConnectionParams, ProtocolParams
 
 def create_collections(
     weaviate_url: Optional[str],
@@ -22,13 +24,17 @@ def create_collections(
     if cohere_api_key:
         headers["X-Cohere-Api-Key"] = cohere_api_key
 
-    # Connect to Weaviate
-    client = weaviate.connect_to_weaviate_cloud(
-        cluster_url=weaviate_url,
-        auth_credentials=Auth.api_key(weaviate_api_key),
-        headers=headers
+    # Direct client creation with connection parameters
+    client = WeaviateClient(
+        connection_params=ConnectionParams(
+            http=ProtocolParams(host="localhost", port=8080, secure=False),
+            grpc=ProtocolParams(host="localhost", port=50051, secure=False),
+        ),
+        additional_headers=headers,
     )
-
+    
+    print(client.is_ready())
+    
     # Delete existing collections if they exist
     for collection_name in [search_collection_name, store_collection_name]:
         if client.collections.exists(collection_name):
@@ -37,7 +43,6 @@ def create_collections(
     # Create search collection for knowledge base
     search_collection = client.collections.create(
         name=search_collection_name,
-        vectorizer_config=wvc.config.Configure.Vectorizer.text2vec_openai() if openai_api_key else wvc.config.Configure.Vectorizer.text2vec_cohere(),
         properties=[
             wvc.config.Property(
                 name="content",
@@ -50,7 +55,6 @@ def create_collections(
     # Create store collection for memories
     store_collection = client.collections.create(
         name=store_collection_name,
-        vectorizer_config=wvc.config.Configure.Vectorizer.text2vec_openai() if openai_api_key else wvc.config.Configure.Vectorizer.text2vec_cohere(),
         properties=[
             wvc.config.Property(
                 name="content",
